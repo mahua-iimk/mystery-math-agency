@@ -1,428 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mystery Math Agency</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --neon-cyan: #00f0ff;
-            --dark-bg: #020617;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--dark-bg);
-            color: white;
-            user-select: none;
-        }
-        .orbitron { font-family: 'Orbitron', sans-serif; }
-        
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mystery Math Agency</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+    
+    body {
+      background-color: #030712;
+      color: #e5e7eb;
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .font-cyber { font-family: 'Orbitron', sans-serif; }
+    
+    .neon-text {
+      text-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.4);
+    }
+    
+    .neon-border {
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.5);
+    }
 
-        .btn-neon {
-            background: transparent; color: var(--neon-cyan); border: 2px solid var(--neon-cyan);
-            text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2), inset 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-        .btn-neon:hover {
-            background: var(--neon-cyan); color: var(--dark-bg);
-            box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 20px var(--neon-cyan);
-            transform: scale(1.02);
-        }
+    .puzzle-box {
+      background: linear-gradient(145deg, #082f49 0%, #03141f 100%);
+      border: 1px solid #06b6d4;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+      border-radius: 16px;
+    }
 
-        .numpad-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.1s; display: flex; align-items: center; justify-content: center;
-        }
-        .numpad-btn:active { background: var(--neon-cyan); color: black; transform: scale(0.95); }
+    .glow-node {
+      transition: all 0.5s ease;
+    }
+    .glow-node.active {
+      fill: #06b6d4;
+      filter: drop-shadow(0 0 12px #06b6d4);
+    }
+    
+    .grid-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    
+    .grid-cell {
+      width: 60px;
+      height: 60px;
+      background: #111827;
+      border: 2px solid #1f2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border-radius: 12px;
+      font-size: 1.5rem;
+      color: #fff;
+    }
+    
+    .grid-cell.target {
+      background: rgba(6,182,212,0.1);
+      border: 2px dashed #06b6d4;
+      color: #06b6d4;
+      animation: pulse-border 2s infinite;
+    }
 
-        .screen { display: none; }
-        .screen.active { display: flex; }
-
-        /* Circuit Map */
-        .node circle { transition: all 0.4s ease; }
-        .node text { transition: all 0.4s ease; font-family: 'Orbitron', sans-serif; font-weight: bold; }
-        
-        .node.locked circle { fill: #0f172a; stroke: #1e293b; stroke-width: 3; }
-        .node.locked text { fill: #475569; }
-        
-        .node.active circle { 
-            fill: #020617; stroke: var(--neon-cyan); stroke-width: 4;
-            filter: drop-shadow(0 0 8px var(--neon-cyan));
-        }
-        .node.active text { fill: var(--neon-cyan); }
-        
-        .node.completed circle { 
-            fill: var(--neon-cyan); stroke: white; stroke-width: 2; 
-            filter: drop-shadow(0 0 8px var(--neon-cyan));
-        }
-        .node.completed text { fill: #000; }
-        
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .agent-bot { animation: bounce 3s infinite ease-in-out; }
-    </style>
+    @keyframes pulse-border {
+      0% { border-color: rgba(6,182,212,0.4); box-shadow: 0 0 0 rgba(6,182,212,0); }
+      50% { border-color: rgba(6,182,212,1); box-shadow: 0 0 15px rgba(6,182,212,0.4); }
+      100% { border-color: rgba(6,182,212,0.4); box-shadow: 0 0 0 rgba(6,182,212,0); }
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col p-2 md:p-6 overflow-x-hidden">
+<body class="min-h-screen flex flex-col relative bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-[#030712] to-black">
+  
+  <!-- Particles Background -->
+  <div id="particles" class="fixed inset-0 pointer-events-none opacity-20"></div>
 
-    <!-- Header -->
-    <header class="w-full max-w-6xl mx-auto flex justify-between items-center mb-4 shrink-0 px-2">
-        <h1 class="text-xl md:text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase orbitron">
-            M.M.A. Terminal
-        </h1>
-        <div class="orbitron text-yellow-400 font-bold">SCORE: <span id="score-display">0</span></div>
-    </header>
+  <!-- Header -->
+  <header class="w-full p-4 flex justify-between items-center border-b border-cyan-900/50 bg-black/50 backdrop-blur-sm z-10 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full border-2 border-cyan-500 flex items-center justify-center text-cyan-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+      </div>
+      <h1 class="font-cyber text-2xl font-bold text-cyan-500 tracking-wider">M.M.A. TERMINAL</h1>
+    </div>
+    <div class="font-cyber text-xl font-bold text-amber-400 tracking-widest">
+      SCORE: <span id="score-display">0</span>
+    </div>
+  </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-4 min-h-0 shrink-0">
+  <!-- Main Content Layout -->
+  <main class="flex-1 flex flex-col md:flex-row w-full max-w-7xl mx-auto p-4 gap-6 relative z-10">
+    
+    <!-- Left Panel (Briefing & Puzzles) -->
+    <div class="flex-1 neon-border bg-gray-900/40 rounded-2xl flex flex-col relative overflow-hidden backdrop-blur-sm p-6" id="left-panel">
+      
+      <!-- Briefing Screen (Initially Visible) -->
+      <div id="briefing-screen" class="flex-1 flex flex-col items-center justify-center text-center animate-fade-in">
+        <div class="w-32 h-32 mb-6">
+          <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]">
+            <rect x="25" y="30" width="50" height="40" rx="10" fill="none" stroke="#06b6d4" stroke-width="4"/>
+            <circle cx="35" cy="45" r="5" fill="#06b6d4"/>
+            <circle cx="65" cy="45" r="5" fill="#06b6d4"/>
+            <path d="M50 30 V15" stroke="#ef4444" stroke-width="3"/>
+            <circle cx="50" cy="12" r="4" fill="#ef4444"/>
+            <path d="M40 70 L45 85 L55 85 L60 70" stroke="#06b6d4" stroke-width="3" fill="none"/>
+          </svg>
+        </div>
+        <h2 class="font-cyber text-3xl font-bold text-cyan-400 tracking-widest mb-4">AGENT BYTE</h2>
+        <div class="bg-cyan-950/50 border border-cyan-800 rounded-xl p-6 max-w-lg mb-8 shadow-lg text-left">
+          <p class="text-xl text-cyan-50 font-semibold mb-4 text-center">ATTENTION RECRUIT!</p>
+          <p class="text-lg text-cyan-200 mb-4 leading-relaxed">
+            You have been selected by the Mystery Math Agency to crack our most classified data files. 
+          </p>
+          <p class="text-lg text-cyan-200 leading-relaxed mb-4">
+            Your mission: Balance the secret scales, decode the hidden sequences, and light up the terminal.
+          </p>
+          <p class="text-xl text-amber-400 font-bold text-center mt-2">
+            Solve the problems. Get the solutions. Move ahead.
+          </p>
+        </div>
+        <button onclick="startMission()" class="font-cyber bg-cyan-600 hover:bg-cyan-400 text-black text-xl font-bold py-4 px-10 rounded-lg transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.5)] hover:scale-105">
+          ACCEPT MISSION
+        </button>
+      </div>
+
+      <!-- Puzzle Screen (Initially Hidden) -->
+      <div id="puzzle-screen" class="hidden flex-1 flex flex-col animate-fade-in">
+        <div class="text-center mb-6">
+          <div class="inline-block px-4 py-1 rounded-full border border-cyan-700 bg-cyan-900/30 text-cyan-300 font-cyber text-sm tracking-widest mb-2" id="puzzle-category"></div>
+          <h2 class="font-cyber text-2xl font-bold text-white tracking-wide" id="puzzle-title"></h2>
+        </div>
         
-        <!-- LEFT PANEL: Briefing & Puzzles -->
-        <div class="flex-1 glass-panel rounded-2xl flex flex-col overflow-hidden relative">
-            
-            <!-- Briefing Screen -->
-            <div id="screen-briefing" class="screen active flex-col h-full items-center justify-center p-6 text-center">
-                <!-- Agent Byte SVG -->
-                <div class="agent-bot w-32 h-32 md:w-48 md:h-48 shrink-0 mb-6">
-                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]">
-                        <!-- Antenna -->
-                        <line x1="100" y1="20" x2="100" y2="50" stroke="#00f0ff" stroke-width="4"/>
-                        <circle cx="100" cy="15" r="8" fill="#ff003c" />
-                        <!-- Head -->
-                        <rect x="50" y="50" width="100" height="80" rx="15" fill="#0f172a" stroke="#00f0ff" stroke-width="5"/>
-                        <!-- Screen -->
-                        <rect x="65" y="65" width="70" height="50" rx="5" fill="#020617"/>
-                        <!-- Eyes -->
-                        <circle cx="80" cy="90" r="8" fill="#00f0ff" />
-                        <circle cx="120" cy="90" r="8" fill="#00f0ff" />
-                        <!-- Neck/Body -->
-                        <path d="M 80 130 L 120 130 L 110 170 L 90 170 Z" fill="#0f172a" stroke="#00f0ff" stroke-width="4"/>
-                    </svg>
-                </div>
-                <h2 class="text-2xl md:text-4xl orbitron font-bold text-cyan-400 mb-4 shrink-0">AGENT BYTE</h2>
-                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl max-w-md w-full mb-8 shrink-0 shadow-inner">
-                    <p class="text-lg md:text-xl text-slate-300 font-mono">
-                        "Solve the problems, get solutions, move ahead."
-                    </p>
-                </div>
-                <button onclick="startGame()" class="btn-neon px-8 py-4 text-xl font-bold rounded-xl shrink-0">
-                    ACCEPT MISSION
-                </button>
+        <div class="flex-1 flex flex-col items-center justify-center mb-8">
+          <p class="text-xl text-cyan-100 mb-6 text-center max-w-md" id="puzzle-prompt"></p>
+          
+          <!-- Visual Container -->
+          <div class="puzzle-box w-full max-w-lg min-h-[200px] flex items-center justify-center p-6 text-2xl md:text-3xl font-bold tracking-widest" id="puzzle-visual">
+            <!-- Dynamic Content goes here -->
+          </div>
+        </div>
+
+        <!-- Feedback -->
+        <div id="feedback-display" class="h-10 text-center font-bold text-xl tracking-wider mb-4"></div>
+
+        <!-- Input System -->
+        <div class="bg-gray-800/80 rounded-xl border border-gray-700 p-6 max-w-sm mx-auto w-full shadow-2xl">
+          <p class="font-cyber text-cyan-500 text-xs tracking-widest mb-3 uppercase">Input Override Code:</p>
+          <div class="flex gap-4">
+            <input type="text" id="answer-input" readonly class="flex-1 bg-black border-2 border-gray-700 rounded-lg text-center text-3xl font-cyber text-cyan-400 outline-none focus:border-cyan-500 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" placeholder="?" />
+            <button onclick="checkAnswer()" class="bg-cyan-600 hover:bg-cyan-500 text-black font-cyber font-bold px-6 rounded-lg transition-colors text-lg">ENTER</button>
+          </div>
+          
+          <!-- Numpad -->
+          <div class="grid grid-cols-3 gap-3 mt-4">
+            <button onclick="typeNum(1)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">1</button>
+            <button onclick="typeNum(2)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">2</button>
+            <button onclick="typeNum(3)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">3</button>
+            <button onclick="typeNum(4)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">4</button>
+            <button onclick="typeNum(5)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">5</button>
+            <button onclick="typeNum(6)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">6</button>
+            <button onclick="typeNum(7)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">7</button>
+            <button onclick="typeNum(8)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">8</button>
+            <button onclick="typeNum(9)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">9</button>
+            <button onclick="typeNum('DEL')" class="bg-red-900/50 hover:bg-red-800 text-red-300 font-cyber text-lg py-3 rounded border border-red-900 transition-colors">DEL</button>
+            <button onclick="typeNum(0)" class="bg-gray-700 hover:bg-gray-600 text-white font-cyber text-xl py-3 rounded border border-gray-600 transition-colors">0</button>
+            <button onclick="typeNum('CLR')" class="bg-yellow-900/50 hover:bg-yellow-800 text-yellow-300 font-cyber text-lg py-3 rounded border border-yellow-900 transition-colors">CLR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel (Vertical Progress Map) -->
+    <div class="w-full md:w-80 neon-border bg-gray-900/40 rounded-2xl p-6 backdrop-blur-sm shrink-0 flex flex-col">
+      <h3 class="font-cyber text-cyan-400 text-center tracking-widest mb-6 uppercase border-b border-cyan-900 pb-4">Mission Progress</h3>
+      <div class="flex-1 relative w-full flex justify-center">
+        <!-- SVG Map going top-to-bottom -->
+        <svg width="120" height="100%" viewBox="0 0 120 600" preserveAspectRatio="xMidYMid meet" class="absolute h-full">
+          <!-- The Wire Path -->
+          <path d="M60 40 L60 100 L90 100 L90 140 L60 140 L60 220 L30 220 L30 260 L60 260 L60 340 L90 340 L90 380 L60 380 L60 460 L30 460 L30 500 L60 500 L60 560" 
+                fill="none" stroke="#1f2937" stroke-width="8" stroke-linejoin="round"/>
+          
+          <!-- Glowing Progress Path (Updates via JS) -->
+          <path id="progress-path" d="M60 40" 
+                fill="none" stroke="#06b6d4" stroke-width="4" stroke-linejoin="round" 
+                class="drop-shadow-[0_0_8px_#06b6d4] transition-all duration-1000"/>
+
+          <!-- Stage Nodes 1 to 6 (Top to Bottom) -->
+          <!-- Node 1 -->
+          <circle cx="60" cy="40" r="18" fill="#111827" stroke="#374151" stroke-width="4" class="node-bg" id="node-bg-0"/>
+          <text x="60" y="47" font-family="Orbitron" font-size="18" font-weight="bold" fill="#6b7280" text-anchor="middle" id="node-text-0">1</text>
+          
+          <!-- Node 2 -->
+          <circle cx="60" cy="140" r="18" fill="#111827" stroke="#374151" stroke-width="4" class="node-bg" id="node-bg-1"/>
+          <text x="60" y="147" font-family="Orbitron" font-size="18" font-weight="bold" fill="#6b7280" text-anchor="middle" id="node-text-1">2</text>
+          
+          <!-- Node 3 -->
+          <circle cx="60" cy="260" r="18" fill="#111827" stroke="#374151" stroke-width="4" class="node-bg" id="node-bg-2"/>
+          <text x="60" y="267" font-family="Orbitron" font-size="18" font-weight="bold" fill="#6b7280" text-anchor="middle" id="node-text-2">3</text>
+          
+          <!-- Node 4 -->
+          <circle cx="60" cy="380" r="18" fill="#111827" stroke="#374151" stroke-width="4" class="node-bg" id="node-bg-3"/>
+          <text x="60" y="387" font-family="Orbitron" font-size="18" font-weight="bold" fill="#6b7280" text-anchor="middle" id="node-text-3">4</text>
+          
+          <!-- Node 5 -->
+          <circle cx="60" cy="500" r="18" fill="#111827" stroke="#374151" stroke-width="4" class="node-bg" id="node-bg-4"/>
+          <text x="60" y="507" font-family="Orbitron" font-size="18" font-weight="bold" fill="#6b7280" text-anchor="middle" id="node-text-4">5</text>
+          
+          <!-- Node 6 -->
+          <circle cx="60" cy="560" r="22" fill="#111827" stroke="#374151" stroke-width="4" class="node-bg" id="node-bg-5"/>
+          <text x="60" y="567" font-family="Orbitron" font-size="20" font-weight="bold" fill="#6b7280" text-anchor="middle" id="node-text-5">6</text>
+        </svg>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="w-full bg-black/80 border-t border-cyan-900 mt-auto py-4 px-6 z-10 shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-cyber text-cyan-600">
+      <div class="flex flex-col md:flex-row gap-6 text-center md:text-left">
+        <div class="bg-gray-900/80 px-4 py-2 rounded-lg border border-cyan-900/50">
+          <span class="text-cyan-800">ACTIVE AGENTS:</span> 
+          <span id="live-agents" class="text-cyan-400 font-bold ml-2">143</span>
+        </div>
+        <div class="bg-gray-900/80 px-4 py-2 rounded-lg border border-cyan-900/50">
+          <span class="text-cyan-800">BADGES AWARDED:</span> 
+          <span class="text-amber-500 font-bold ml-2">1,427</span>
+        </div>
+      </div>
+      <div class="text-cyan-400 tracking-wider">
+        IDEATED BY <span class="font-bold text-cyan-300">MAHUA BANERJEE</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // === PUZZLE DATA ===
+    const puzzles = [
+      {
+        category: "STAGE 1: ALGEBRAIC BALANCE",
+        title: "Fruit Stand Encryption",
+        prompt: "Substitute the symbols to deduce the value of the Grape ( 🍇 ).",
+        visual: `
+          <div style="line-height: 2;">
+            🍎 + 🍎 = <span class="text-cyan-400">10</span><br>
+            🍎 + 🍌 = <span class="text-cyan-400">9</span><br>
+            🍌 + 🍇 = <span class="text-cyan-400">10</span><br>
+            <hr style="border-color: #374151; margin: 10px 0;">
+            🍇 = <span class="text-amber-400">[ ? ]</span>
+          </div>
+        `,
+        answer: 6
+      },
+      {
+        category: "STAGE 2: NUMBER THEORY",
+        title: "The Agent Footstep Interval",
+        prompt: "Two spies start walking. Spy A drops a tracker every 4 minutes, and Spy B every 6 minutes. When will they drop trackers simultaneously?",
+        visual: `
+          <div class="text-center">
+            <span class="text-cyan-400">LCM( 4 , 6 )</span><br>
+            <span class="text-gray-400 mt-2 block text-xl">=</span>
+            <span class="text-amber-400 block mt-2">[ ? ] MINUTES</span>
+          </div>
+        `,
+        answer: 12
+      },
+      {
+        category: "STAGE 3: SEQUENCE LOGIC",
+        title: "Encrypted Data Stream",
+        prompt: "Find the missing number in the encrypted progression sequence.",
+        visual: `
+          <div class="flex items-center gap-4 text-3xl">
+            <span>2</span> <span class="text-gray-600">→</span>
+            <span>6</span> <span class="text-gray-600">→</span>
+            <span>12</span> <span class="text-gray-600">→</span>
+            <span>20</span> <span class="text-gray-600">→</span>
+            <span class="text-amber-400">[ ? ]</span>
+          </div>
+        `,
+        answer: 30
+      },
+      {
+        category: "STAGE 4: GEOMETRIC DEDUCTION",
+        title: "The Security Perimeter",
+        prompt: "A square secure room has an area of 64 sq meters. What is the total length of its perimeter in meters?",
+        visual: `
+          <div class="flex items-center gap-8">
+            <div class="w-24 h-24 border-4 border-cyan-500 bg-cyan-900/30 flex items-center justify-center text-cyan-200 text-xl font-bold">
+              64m²
             </div>
-
-            <!-- Puzzle Screen -->
-            <div id="screen-puzzle" class="screen flex-col h-full p-4 md:p-6">
-                <!-- Header -->
-                <div class="text-center mb-2 shrink-0">
-                    <div id="puzzle-badge" class="inline-block px-3 py-1 bg-cyan-950 text-cyan-400 border border-cyan-800 rounded-full orbitron text-xs md:text-sm mb-2">STAGE 1</div>
-                    <h2 id="puzzle-title" class="text-xl md:text-2xl font-bold orbitron text-white">Title</h2>
-                </div>
-                
-                <!-- Visual Area -->
-                <div class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-center p-4 mb-4 shadow-inner min-h-[150px]">
-                    <div id="puzzle-visual" class="text-center text-lg md:text-2xl tracking-widest">
-                        <!-- Content -->
-                    </div>
-                </div>
-
-                <!-- Input & Numpad -->
-                <div class="w-full bg-slate-900/50 p-4 rounded-xl border border-cyan-900/50 shrink-0">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <div class="flex-1 flex flex-col justify-end">
-                            <label class="text-xs text-cyan-500 mb-1 orbitron">INPUT CODE:</label>
-                            <div id="input-display" class="w-full h-12 bg-black border border-slate-600 rounded-lg flex items-center justify-end px-4 text-2xl orbitron text-cyan-400 tracking-wider">
-                                <span class="animate-pulse text-slate-600">_</span>
-                            </div>
-                            <button onclick="checkAnswer()" class="btn-neon w-full py-3 mt-3 rounded-lg font-bold">SUBMIT</button>
-                            <div id="feedback-msg" class="text-center text-sm mt-2 font-bold h-4"></div>
-                        </div>
-                        <div class="w-full sm:w-48 grid grid-cols-3 gap-2 shrink-0">
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(1)">1</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(2)">2</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(3)">3</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(4)">4</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(5)">5</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(6)">6</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(7)">7</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(8)">8</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(9)">9</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron text-red-400" onclick="clearInput()">C</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(0)">0</button>
-                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron text-slate-400" onclick="deleteNum()">←</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="text-left">
+              Area = side × side<br>
+              Perimeter = <span class="text-amber-400">[ ? ]</span>
             </div>
-            
-            <!-- Win Screen -->
-            <div id="screen-win" class="screen flex-col h-full items-center justify-center p-6 text-center">
-                <div class="w-24 h-24 rounded-full bg-yellow-500/20 border-4 border-yellow-400 flex items-center justify-center text-yellow-400 shadow-[0_0_30px_#facc15] mb-6">
-                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                </div>
-                <h2 class="text-4xl orbitron font-black text-yellow-400 mb-4">MISSION COMPLETE</h2>
-                <p class="text-xl text-slate-300 mb-8">Master Detective Badge Unlocked.</p>
-                <button onclick="location.reload()" class="btn-neon px-8 py-3 rounded-lg font-bold border-yellow-400 text-yellow-400">PLAY AGAIN</button>
-            </div>
-        </div>
+          </div>
+        `,
+        answer: 32
+      },
+      {
+        category: "STAGE 5: MAGIC SQUARE",
+        title: "The 3x3 Grid Code",
+        prompt: "Every row, column, and main diagonal must add up to 15. What number replaces [ ? ]?",
+        type: "grid",
+        gridData: [
+          [8, 1, 6],
+          [3, 5, 7],
+          [4, "?", 2]
+        ],
+        answer: 9
+      },
+      {
+        category: "FINAL STAGE: MASTER LOGIC",
+        title: "The Lock Code",
+        prompt: "If 5 machines can build 5 spy gadgets in 5 minutes, how many minutes does it take 100 machines to build 100 gadgets?",
+        visual: `
+          <div class="text-center">
+            <div class="text-cyan-400 mb-4">5 🤖 = 5 🔧 = 5 ⏱️</div>
+            <div class="text-gray-300">100 🤖 = 100 🔧 = <span class="text-amber-400">[ ? ] ⏱️</span></div>
+          </div>
+        `,
+        answer: 5
+      }
+    ];
 
-        <!-- RIGHT PANEL: Circuit Map -->
-        <div class="w-full md:w-64 lg:w-80 glass-panel rounded-2xl p-4 md:p-6 flex flex-col shrink-0 min-h-[300px] md:min-h-0">
-            <h3 class="orbitron text-center text-cyan-400 border-b border-cyan-900/50 pb-3 mb-4 tracking-widest shrink-0">MISSION PROGRESS</h3>
-            <div class="flex-1 w-full relative flex items-center justify-center overflow-hidden">
-                <svg viewBox="0 0 100 500" class="w-full h-full object-contain" preserveAspectRatio="xMidYMid meet">
-                    <!-- Base Path -->
-                    <path d="M 50 20 L 50 480" stroke="#1e293b" stroke-width="4" fill="none"/>
-                    
-                    <!-- Nodes (1 Top to 6 Bottom) -->
-                    <g id="node-1" class="node active" transform="translate(50, 40)">
-                        <circle cx="0" cy="0" r="16" />
-                        <text x="0" y="5" text-anchor="middle" font-size="14">1</text>
-                    </g>
-                    <g id="node-2" class="node locked" transform="translate(50, 120)">
-                        <circle cx="0" cy="0" r="16" />
-                        <text x="0" y="5" text-anchor="middle" font-size="14">2</text>
-                    </g>
-                    <g id="node-3" class="node locked" transform="translate(50, 200)">
-                        <circle cx="0" cy="0" r="16" />
-                        <text x="0" y="5" text-anchor="middle" font-size="14">3</text>
-                    </g>
-                    <g id="node-4" class="node locked" transform="translate(50, 280)">
-                        <circle cx="0" cy="0" r="16" />
-                        <text x="0" y="5" text-anchor="middle" font-size="14">4</text>
-                    </g>
-                    <g id="node-5" class="node locked" transform="translate(50, 360)">
-                        <circle cx="0" cy="0" r="16" />
-                        <text x="0" y="5" text-anchor="middle" font-size="14">5</text>
-                    </g>
-                    <g id="node-6" class="node locked" transform="translate(50, 440)">
-                        <circle cx="0" cy="0" r="20" />
-                        <text x="0" y="6" text-anchor="middle" font-size="16">6</text>
-                    </g>
-                </svg>
-            </div>
-        </div>
-    </main>
+    let currentStage = 0;
+    let score = 0;
 
-    <!-- Footer -->
-    <footer class="w-full max-w-6xl mx-auto mt-4 px-4 py-4 glass-panel rounded-xl flex flex-col md:flex-row justify-between items-center text-xs md:text-sm text-cyan-500/80 orbitron shrink-0 gap-2 md:gap-0">
-        <div>
-            ACTIVE AGENTS: <span id="active-agents" class="text-cyan-300 font-bold transition-all duration-300 inline-block">--</span>
-        </div>
-        <div class="text-slate-400 font-sans tracking-widest uppercase">
-            Ideated by <span class="text-cyan-400 font-bold">Mahua Banerjee</span>
-        </div>
-        <div>
-            BADGES AWARDED: <span id="badges-awarded" class="text-yellow-400 font-bold">--</span>
-        </div>
-    </footer>
+    // === GAME LOGIC ===
+    function startMission() {
+      document.getElementById('briefing-screen').classList.add('hidden');
+      document.getElementById('puzzle-screen').classList.remove('hidden');
+      loadStage();
+    }
 
-    <!-- Logic with Firebase Integration -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    function loadStage() {
+      const p = puzzles[currentStage];
+      document.getElementById('puzzle-category').innerText = p.category;
+      document.getElementById('puzzle-title').innerText = p.title;
+      document.getElementById('puzzle-prompt').innerText = p.prompt;
+      
+      const visualContainer = document.getElementById('puzzle-visual');
+      if (p.type === 'grid') {
+        let gridHTML = '<div class="grid-3x3">';
+        p.gridData.flat().forEach(val => {
+          if (val === "?") {
+            gridHTML += `<div class="grid-cell target">[ ? ]</div>`;
+          } else {
+            gridHTML += `<div class="grid-cell">${val}</div>`;
+          }
+        });
+        gridHTML += '</div>';
+        visualContainer.innerHTML = gridHTML;
+      } else {
+        visualContainer.innerHTML = p.visual;
+      }
 
-        // ==============================================================================
-        // 1. FIREBASE CONFIGURATION - PASTE YOUR REAL DETAILS HERE
-        // ==============================================================================
-        const fallbackConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+      document.getElementById('answer-input').value = "";
+      document.getElementById('feedback-display').innerText = "";
+      updateMap();
+    }
+
+    // === MAP PATH DATA ===
+    const pathSegments = [
+      "M60 40 L60 100 L90 100 L90 140 L60 140",                 // 1 to 2
+      "M60 40 L60 100 L90 100 L90 140 L60 140 L60 220 L30 220 L30 260 L60 260", // 1 to 3
+      "M60 40 L60 100 L90 100 L90 140 L60 140 L60 220 L30 220 L30 260 L60 260 L60 340 L90 340 L90 380 L60 380", // 1 to 4
+      "M60 40 L60 100 L90 100 L90 140 L60 140 L60 220 L30 220 L30 260 L60 260 L60 340 L90 340 L90 380 L60 380 L60 460 L30 460 L30 500 L60 500", // 1 to 5
+      "M60 40 L60 100 L90 100 L90 140 L60 140 L60 220 L30 220 L30 260 L60 260 L60 340 L90 340 L90 380 L60 380 L60 460 L30 460 L30 500 L60 500 L60 560"  // 1 to 6
+    ];
+
+    function updateMap() {
+      // Update nodes
+      for(let i = 0; i < 6; i++) {
+        const nodeBg = document.getElementById(`node-bg-${i}`);
+        const nodeText = document.getElementById(`node-text-${i}`);
         
-        // Use environment configs if injected, otherwise fallback to user-pasted config above
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : fallbackConfig;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mystery-math-agency';
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let user = null;
-        let statsDocRef = null;
-
-        async function initAuth() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                user = auth.currentUser;
-                
-                // Set path following strict rules: /artifacts/{appId}/public/data/{collectionName}
-                statsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
-                
-                // Initialize the tracking document if it's the first time running
-                const snap = await getDoc(statsDocRef);
-                if (!snap.exists()) {
-                    await setDoc(statsDocRef, { badgesAwarded: 0, activeAgents: 0 });
-                }
-
-                // Safely Increment active agents when someone joins
-                await updateDoc(statsDocRef, { activeAgents: increment(1) });
-
-                // Listen for live updates and update the UI
-                onSnapshot(statsDocRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        document.getElementById('active-agents').innerText = Math.max(0, data.activeAgents || 0);
-                        document.getElementById('badges-awarded').innerText = data.badgesAwarded || 0;
-                    }
-                }, (error) => {
-                    console.error("Error connecting to real-time stats:", error);
-                });
-
-                // Decrement active agents when someone closes the tab
-                window.addEventListener('beforeunload', () => {
-                    if (user && statsDocRef) {
-                        updateDoc(statsDocRef, { activeAgents: increment(-1) });
-                    }
-                });
-
-            } catch (e) {
-                console.error("Firebase Authentication Error:", e);
-            }
+        if (i <= currentStage) {
+          nodeBg.setAttribute('stroke', '#06b6d4');
+          nodeBg.setAttribute('fill', 'rgba(6,182,212,0.2)');
+          nodeText.setAttribute('fill', '#fff');
+          if(i === currentStage) {
+            nodeBg.classList.add('active');
+          } else {
+            nodeBg.classList.remove('active');
+          }
         }
+      }
+
+      // Update Path
+      const progressPath = document.getElementById('progress-path');
+      if (currentStage > 0) {
+        progressPath.setAttribute('d', pathSegments[currentStage - 1]);
+      } else {
+        progressPath.setAttribute('d', "M60 40");
+      }
+    }
+
+    // === NUMPAD LOGIC ===
+    function typeNum(val) {
+      const input = document.getElementById('answer-input');
+      if (val === 'CLR') {
+        input.value = '';
+      } else if (val === 'DEL') {
+        input.value = input.value.slice(0, -1);
+      } else {
+        if(input.value.length < 5) input.value += val;
+      }
+    }
+
+    // === ANSWER CHECKING ===
+    function checkAnswer() {
+      const userVal = parseInt(document.getElementById('answer-input').value, 10);
+      const target = puzzles[currentStage].answer;
+      const feedback = document.getElementById('feedback-display');
+
+      if (isNaN(userVal)) {
+        feedback.innerText = "WARNING: ENTER A VALID NUMBER";
+        feedback.className = "text-amber-500 h-10 text-center font-bold text-xl tracking-wider mb-4";
+        return;
+      }
+
+      if (userVal === target) {
+        feedback.innerText = "ACCESS GRANTED";
+        feedback.className = "text-green-400 h-10 text-center font-bold text-xl tracking-wider mb-4 drop-shadow-[0_0_5px_#4ade80]";
+        score += 100;
+        document.getElementById('score-display').innerText = score;
         
-        // Safety check so the game doesn't crash if Firebase credentials aren't pasted yet
-        if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
-            initAuth();
-        } else {
-            console.warn("Firebase config missing. Live tracking disabled. Set config at the top of the script.");
-            document.getElementById('active-agents').innerText = "1";
-            document.getElementById('badges-awarded').innerText = "0";
-        }
-
-        // ==============================================================================
-        // 2. GAME LOGIC & UI (Exported to window to bypass module scoping)
-        // ==============================================================================
-        
-        const puzzles = [
-            {
-                type: "Number Sequence", title: "Olympiad Pattern",
-                html: `<div class="font-mono text-xl md:text-2xl">3 &rarr; 7 &rarr; 15 &rarr; 31 &rarr; <span class="text-cyan-400">[ ? ]</span></div>`,
-                answer: "63", xp: 100
-            },
-            {
-                type: "Substitution", title: "Algebraic Deduction",
-                html: `<div class="space-y-2 text-xl font-mono"><div>🍎 + 🍎 = 10</div><div>🍎 + 🍌 = 9</div><div>🍌 + 🍇 = 10</div><div class="text-yellow-400 mt-2">🍇 = [ ? ]</div></div>`,
-                answer: "6", xp: 150
-            },
-            {
-                type: "Spatial Logic", title: "Magic Grid",
-                html: `<div class="grid grid-cols-3 gap-2 w-48 mx-auto font-mono text-xl"><div class="bg-slate-800 py-2 rounded">8</div><div class="bg-slate-800 py-2 rounded">1</div><div class="bg-slate-800 py-2 rounded">6</div><div class="bg-slate-800 py-2 rounded">3</div><div class="bg-cyan-900 border border-cyan-400 py-2 rounded text-cyan-400">[?]</div><div class="bg-slate-800 py-2 rounded">7</div><div class="bg-slate-800 py-2 rounded">4</div><div class="bg-slate-800 py-2 rounded">9</div><div class="bg-slate-800 py-2 rounded">2</div></div>`,
-                answer: "5", xp: 200
-            },
-            {
-                type: "Algebra", title: "Geometric Equations",
-                html: `<div class="space-y-2 text-xl font-mono"><div>🔺 + ⬛ = 12</div><div>🔺 = ⬛ + ⬛</div><div class="text-yellow-400 mt-2">⬛ = [ ? ]</div></div>`,
-                answer: "4", xp: 250
-            },
-            {
-                type: "Number Theory", title: "LCM Deduction",
-                html: `<div class="text-xl font-mono"><span class="text-purple-400">LCM( 6 , 8 )</span> = <span class="text-yellow-400">[ ? ]</span></div>`,
-                answer: "24", xp: 300
-            },
-            {
-                type: "Cryptography", title: "Cipher Intercept",
-                html: `<div class="text-lg font-mono"><p class="text-sm text-slate-400 mb-2">A=1, B=2, C=3...</p><div>CAB = 3+1+2 = 6</div><div class="text-yellow-400 mt-2">BAD = [ ? ]</div></div>`,
-                answer: "7", xp: 400
-            }
-        ];
-
-        let currentStage = 0;
-        let score = 0;
-        let inputVal = "";
-
-        const screens = document.querySelectorAll('.screen');
-        const inputDisplay = document.getElementById('input-display');
-        const msg = document.getElementById('feedback-msg');
-
-        window.startGame = function() {
-            currentStage = 0;
-            score = 0;
-            updateMap();
+        setTimeout(() => {
+          currentStage++;
+          if (currentStage < puzzles.length) {
             loadStage();
-            showScreen('screen-puzzle');
-        }
+          } else {
+            winGame();
+          }
+        }, 1200);
+      } else {
+        feedback.innerText = "ACCESS DENIED - INCORRECT CODE";
+        feedback.className = "text-red-500 h-10 text-center font-bold text-xl tracking-wider mb-4 drop-shadow-[0_0_5px_#ef4444]";
+      }
+    }
 
-        function loadStage() {
-            if(currentStage >= puzzles.length) {
-                showScreen('screen-win');
-                return;
-            }
-            const p = puzzles[currentStage];
-            document.getElementById('puzzle-badge').innerText = `STAGE ${currentStage + 1}: ${p.type.toUpperCase()}`;
-            document.getElementById('puzzle-title').innerText = p.title;
-            document.getElementById('puzzle-visual').innerHTML = p.html;
-            window.clearInput();
-            msg.innerText = "";
-        }
+    function winGame() {
+      updateMap(); // Light up the final node
+      document.getElementById('puzzle-screen').innerHTML = `
+        <div class="flex-1 flex flex-col items-center justify-center text-center animate-fade-in">
+          <h2 class="font-cyber text-4xl font-bold text-green-400 tracking-widest mb-6 drop-shadow-[0_0_15px_rgba(74,222,128,0.6)]">MISSION ACCOMPLISHED</h2>
+          <div class="w-40 h-40 mb-6 bg-green-900/20 border-4 border-green-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(74,222,128,0.4)]">
+            <svg class="w-20 h-20 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <p class="text-xl text-cyan-200 mb-2">Final Score: <span class="text-amber-400 font-bold">${score} XP</span></p>
+          <p class="text-lg text-cyan-400 mb-8">You have officially earned your M.M.A. Agent Badge.</p>
+          <button onclick="location.reload()" class="font-cyber border border-cyan-500 text-cyan-400 hover:bg-cyan-900/50 py-3 px-8 rounded transition-all">START NEW MISSION</button>
+        </div>
+      `;
+    }
 
-        window.typeNum = function(n) { if(inputVal.length < 5) { inputVal += n; renderInput(); } }
-        window.deleteNum = function() { inputVal = inputVal.slice(0, -1); renderInput(); }
-        window.clearInput = function() { inputVal = ""; renderInput(); }
-        
-        function renderInput() {
-            inputDisplay.innerHTML = inputVal === "" ? `<span class="animate-pulse text-slate-600">_</span>` : inputVal;
-            msg.innerText = "";
-        }
+    // === BACKGROUND PARTICLES ===
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const symbols = ['+', '-', '×', '÷', '=', '%', '∫', '∑'];
+      for(let i=0; i<30; i++) {
+        const p = document.createElement('div');
+        p.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        p.style.position = 'absolute';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.top = Math.random() * 100 + 'vh';
+        p.style.color = '#06b6d4';
+        p.style.fontSize = (Math.random() * 20 + 10) + 'px';
+        p.style.opacity = Math.random() * 0.5 + 0.1;
+        p.style.animation = `float ${Math.random() * 10 + 5}s linear infinite`;
+        container.appendChild(p);
+      }
+    }
+    
+    // Create floating animation in CSS
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        50% { opacity: 0.5; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+      }
+      .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    `;
+    document.head.appendChild(style);
+    createParticles();
 
-        window.checkAnswer = async function() {
-            if(inputVal === "") return;
-            const p = puzzles[currentStage];
-            
-            if(inputVal === p.answer) {
-                msg.innerText = "ACCESS GRANTED";
-                msg.className = "text-center text-sm mt-2 font-bold h-4 text-cyan-400";
-                score += p.xp;
-                document.getElementById('score-display').innerText = score;
-                
-                // If this is the very last stage, update the permanent Database badge tracker
-                if(currentStage === puzzles.length - 1 && user && statsDocRef) {
-                    try {
-                        await updateDoc(statsDocRef, { badgesAwarded: increment(1) });
-                    } catch (e) {
-                        console.error("Could not upload badge award to database:", e);
-                    }
-                }
+    // === LIVE AGENT COUNTER LOGIC ===
+    setInterval(() => {
+        const baseAgents = 140;
+        const fluctuation = Math.floor(Math.random() * 10);
+        document.getElementById('live-agents').innerText = baseAgents + fluctuation;
+    }, 4500);
 
-                setTimeout(() => {
-                    currentStage++;
-                    updateMap();
-                    loadStage();
-                }, 1000);
-            } else {
-                msg.innerText = "ACCESS DENIED";
-                msg.className = "text-center text-sm mt-2 font-bold h-4 text-red-500";
-                window.clearInput();
-            }
-        }
-
-        function updateMap() {
-            for(let i=1; i<=6; i++) {
-                const node = document.getElementById(`node-${i}`);
-                node.className.baseVal = "node ";
-                if(i < currentStage + 1) node.className.baseVal += "completed";
-                else if(i === currentStage + 1) node.className.baseVal += "active";
-                else node.className.baseVal += "locked";
-            }
-        }
-
-        function showScreen(id) {
-            screens.forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-    </script>
+  </script>
 </body>
 </html>
