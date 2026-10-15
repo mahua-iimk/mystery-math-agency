@@ -3,62 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mystery Math Agency | Agent Training</title>
-    <!-- Tailwind CSS for Layout -->
+    <title>Mystery Math Agency</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    
     <style>
-        /* CORE NEON STYLES */
         :root {
             --neon-cyan: #00f0ff;
-            --neon-pink: #ff003c;
-            --dark-bg: #050b14;
-            --panel-bg: rgba(10, 20, 35, 0.85);
+            --dark-bg: #020617;
         }
-
         body {
+            font-family: 'Inter', sans-serif;
             background-color: var(--dark-bg);
             color: white;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
             user-select: none;
         }
-
         .orbitron { font-family: 'Orbitron', sans-serif; }
-
-        /* Floating Background Particles */
-        #particle-container {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1; pointer-events: none; overflow: hidden;
-        }
-
-        .math-particle {
-            position: absolute;
-            color: rgba(0, 240, 255, 0.15);
-            font-size: 2rem;
-            font-weight: bold;
-            font-family: 'Orbitron', sans-serif;
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.5; }
-            90% { opacity: 0.5; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* Glass Panels */
+        
         .glass-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
-            border-radius: 20px;
         }
 
-        /* Neon Buttons */
         .btn-neon {
             background: transparent; color: var(--neon-cyan); border: 2px solid var(--neon-cyan);
             text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease;
@@ -70,565 +37,391 @@
             transform: scale(1.02);
         }
 
-        /* Hovering Bot */
-        @keyframes hoverBot {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        .agent-bot { animation: hoverBot 4s ease-in-out infinite; }
-
-        /* Numpad */
         .numpad-btn {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; font-size: 1.5rem; font-family: 'Orbitron', sans-serif;
             transition: all 0.1s; display: flex; align-items: center; justify-content: center;
         }
         .numpad-btn:active { background: var(--neon-cyan); color: black; transform: scale(0.95); }
 
-        /* Screens & Overlays */
-        .screen { display: none; opacity: 0; transition: opacity 0.4s ease; flex-direction: column; width: 100%; height: 100%; }
-        .screen.active { display: flex; opacity: 1; }
-        
-        .feedback-overlay {
-            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(5, 11, 20, 0.95); z-index: 50; border-radius: 20px;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
-        .feedback-overlay.show { opacity: 1; pointer-events: auto; }
+        .screen { display: none; }
+        .screen.active { display: flex; }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-        .shake-err { animation: shake 0.4s ease-in-out; }
-
-        /* --- CIRCUIT BOARD MAP STYLES --- */
-        .map-svg-node {
-            transition: all 0.5s ease;
-            cursor: pointer;
-        }
-        .map-svg-node text {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 16px;
-            pointer-events: none;
-            transition: fill 0.3s;
-        }
+        /* Circuit Map */
+        .node circle { transition: all 0.4s ease; }
+        .node text { transition: all 0.4s ease; font-family: 'Orbitron', sans-serif; font-weight: bold; }
         
-        /* Locked Node */
-        .node-locked circle { fill: #0f172a; stroke: #1e293b; stroke-width: 4; }
-        .node-locked text { fill: #334155; }
+        .node.locked circle { fill: #0f172a; stroke: #1e293b; stroke-width: 3; }
+        .node.locked text { fill: #475569; }
         
-        /* Unlocked (Current active stage) */
-        .node-unlocked circle { 
-            fill: #050b14; stroke: var(--neon-cyan); stroke-width: 4;
-            filter: drop-shadow(0 0 10px var(--neon-cyan));
-            animation: pulse-node 1.5s infinite alternate;
-        }
-        .node-unlocked text { fill: var(--neon-cyan); }
-        
-        /* Completed Stage */
-        .node-completed circle { 
-            fill: var(--neon-cyan); stroke: #ffffff; stroke-width: 2; 
+        .node.active circle { 
+            fill: #020617; stroke: var(--neon-cyan); stroke-width: 4;
             filter: drop-shadow(0 0 8px var(--neon-cyan));
         }
-        .node-completed text { fill: #000000; font-weight: 900; }
-
-        @keyframes pulse-node {
-            from { filter: drop-shadow(0 0 5px var(--neon-cyan)); }
-            to { filter: drop-shadow(0 0 20px var(--neon-cyan)); }
+        .node.active text { fill: var(--neon-cyan); }
+        
+        .node.completed circle { 
+            fill: var(--neon-cyan); stroke: white; stroke-width: 2; 
+            filter: drop-shadow(0 0 8px var(--neon-cyan));
         }
+        .node.completed text { fill: #000; }
+        
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .agent-bot { animation: bounce 3s infinite ease-in-out; }
     </style>
 </head>
-<body class="w-full min-h-screen flex flex-col items-center justify-center p-2 md:p-6 overflow-x-hidden">
+<body class="min-h-screen flex flex-col p-2 md:p-6 overflow-x-hidden">
 
-    <!-- Particles Background -->
-    <div id="particle-container"></div>
+    <!-- Header -->
+    <header class="w-full max-w-6xl mx-auto flex justify-between items-center mb-4 shrink-0 px-2">
+        <h1 class="text-xl md:text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase orbitron">
+            M.M.A. Terminal
+        </h1>
+        <div class="orbitron text-yellow-400 font-bold">SCORE: <span id="score-display">0</span></div>
+    </header>
 
-    <!-- MAIN APP CONTAINER (FLEXIBLE HEIGHT) -->
-    <div class="w-full max-w-7xl min-h-[85vh] flex flex-col md:flex-row gap-4 md:gap-6 relative z-10">
+    <!-- Main Content Area -->
+    <main class="flex-1 w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-4 min-h-0 shrink-0">
         
-        <!-- LEFT COLUMN: CONTENT AREA -->
-        <div class="flex-1 glass-panel relative flex flex-col overflow-hidden">
+        <!-- LEFT PANEL: Briefing & Puzzles -->
+        <div class="flex-1 glass-panel rounded-2xl flex flex-col overflow-hidden relative">
             
-            <!-- Header (Fixed top) -->
-            <header class="w-full p-4 md:p-5 border-b border-cyan-500/30 flex justify-between items-center bg-slate-900/40 z-20 shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl border border-cyan-400 bg-cyan-950 flex items-center justify-center text-cyan-400 shadow-[0_0_10px_rgba(0,240,255,0.3)]">
-                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <h1 class="text-lg md:text-2xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase orbitron">
-                        M.M.A. Terminal
-                    </h1>
-                </div>
-                <div class="orbitron text-base md:text-lg text-yellow-400 font-bold tracking-wider">
-                    SCORE: <span id="xp-points">0</span>
-                </div>
-            </header>
-
-            <!-- VIEW 1: BRIEFING SCREEN -->
-            <div id="screen-briefing" class="screen active flex-1 items-center justify-center p-4 md:p-8 text-center relative z-10">
-                
-                <!-- SVG Agent Bot -->
-                <div class="agent-bot w-28 h-28 md:w-40 md:h-40 mb-4 shrink-0 relative flex justify-center mt-4">
-                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full object-contain">
+            <!-- Briefing Screen -->
+            <div id="screen-briefing" class="screen active flex-col h-full items-center justify-center p-6 text-center">
+                <!-- Agent Byte SVG -->
+                <div class="agent-bot w-32 h-32 md:w-48 md:h-48 shrink-0 mb-6">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]">
+                        <!-- Antenna -->
                         <line x1="100" y1="20" x2="100" y2="50" stroke="#00f0ff" stroke-width="4"/>
-                        <circle cx="100" cy="15" r="8" fill="#ff003c" filter="drop-shadow(0 0 5px #ff003c)"/>
-                        <rect x="40" y="50" width="120" height="90" rx="15" fill="#0a1423" stroke="#00f0ff" stroke-width="6"/>
-                        <rect x="55" y="65" width="90" height="60" rx="5" fill="#030712"/>
-                        <text x="70" y="105" fill="#00f0ff" font-family="Orbitron" font-weight="bold" font-size="28" filter="drop-shadow(0 0 5px #00f0ff)">&gt;</text>
-                        <text x="110" y="105" fill="#00f0ff" font-family="Orbitron" font-weight="bold" font-size="28" filter="drop-shadow(0 0 5px #00f0ff)">_</text>
-                        <path d="M 60 150 L 140 150 L 120 190 L 80 190 Z" fill="#0a1423" stroke="#00f0ff" stroke-width="4"/>
+                        <circle cx="100" cy="15" r="8" fill="#ff003c" />
+                        <!-- Head -->
+                        <rect x="50" y="50" width="100" height="80" rx="15" fill="#0f172a" stroke="#00f0ff" stroke-width="5"/>
+                        <!-- Screen -->
+                        <rect x="65" y="65" width="70" height="50" rx="5" fill="#020617"/>
+                        <!-- Eyes -->
+                        <circle cx="80" cy="90" r="8" fill="#00f0ff" />
+                        <circle cx="120" cy="90" r="8" fill="#00f0ff" />
+                        <!-- Neck/Body -->
+                        <path d="M 80 130 L 120 130 L 110 170 L 90 170 Z" fill="#0f172a" stroke="#00f0ff" stroke-width="4"/>
                     </svg>
                 </div>
-                
-                <h2 class="text-2xl md:text-5xl font-black mb-4 orbitron text-white drop-shadow-md shrink-0">INITIALIZING...</h2>
-                
-                <div class="max-w-2xl bg-black/50 p-4 md:p-6 rounded-xl border border-cyan-900/50 mb-6 text-left shadow-inner flex-1 overflow-y-auto">
-                    <p class="text-base md:text-lg text-cyan-100 leading-relaxed font-mono mb-3">
-                        <span class="text-cyan-400 font-bold">></span> Welcome Recruit. I am Agent Byte.
-                    </p>
-                    <p class="text-base md:text-lg text-slate-300 leading-relaxed font-mono">
-                        To complete your training and earn your badge, <span class="text-yellow-400 font-bold">you must solve the puzzles, crack the codes, and move ahead.</span>
-                    </p>
-                    <p class="text-base md:text-lg text-slate-300 leading-relaxed font-mono mt-3">
-                        The syndicate's geometric vaults are heavily encrypted. Prove your deduction skills to unlock your official Master Detective status. Good luck.
+                <h2 class="text-2xl md:text-4xl orbitron font-bold text-cyan-400 mb-4 shrink-0">AGENT BYTE</h2>
+                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl max-w-md w-full mb-8 shrink-0 shadow-inner">
+                    <p class="text-lg md:text-xl text-slate-300 font-mono">
+                        "Solve the problems, get solutions, move ahead."
                     </p>
                 </div>
-
-                <button onclick="startTraining()" class="btn-neon px-6 py-3 md:px-8 md:py-4 text-lg md:text-xl font-bold rounded-xl flex items-center gap-3 shrink-0 mb-4">
-                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                    BEGIN MISSION
+                <button onclick="startGame()" class="btn-neon px-8 py-4 text-xl font-bold rounded-xl shrink-0">
+                    ACCEPT MISSION
                 </button>
             </div>
 
-            <!-- VIEW 2: PUZZLE INTERFACE -->
-            <div id="screen-puzzle" class="screen flex flex-col p-4 md:p-6 relative z-10">
-                
-                <!-- Puzzle Header -->
-                <div class="text-center mb-4 shrink-0 mt-2">
-                    <div id="puzzle-badge" class="inline-block px-3 py-1 rounded-full bg-cyan-950 border border-cyan-500 text-cyan-300 orbitron text-xs md:text-sm mb-2">STAGE 1</div>
-                    <h2 id="puzzle-title" class="text-xl md:text-2xl orbitron font-bold text-white mb-1">Title</h2>
-                    <p id="puzzle-desc" class="text-slate-400 text-xs md:text-sm">Description</p>
+            <!-- Puzzle Screen -->
+            <div id="screen-puzzle" class="screen flex-col h-full p-4 md:p-6">
+                <!-- Header -->
+                <div class="text-center mb-2 shrink-0">
+                    <div id="puzzle-badge" class="inline-block px-3 py-1 bg-cyan-950 text-cyan-400 border border-cyan-800 rounded-full orbitron text-xs md:text-sm mb-2">STAGE 1</div>
+                    <h2 id="puzzle-title" class="text-xl md:text-2xl font-bold orbitron text-white">Title</h2>
                 </div>
-
-                <!-- Puzzle Visual Area -->
-                <div class="flex-1 w-full bg-black/50 border border-slate-700 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[160px] shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mb-4">
-                    <div id="puzzle-visual" class="text-center text-lg md:text-2xl font-bold tracking-widest leading-relaxed">
-                        <!-- Content Injected via JS -->
+                
+                <!-- Visual Area -->
+                <div class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-center p-4 mb-4 shadow-inner min-h-[150px]">
+                    <div id="puzzle-visual" class="text-center text-lg md:text-2xl tracking-widest">
+                        <!-- Content -->
                     </div>
                 </div>
 
-                <!-- Interactive Controls & Numpad -->
-                <div class="w-full max-w-lg mx-auto bg-slate-800/60 p-4 rounded-2xl border border-cyan-900 backdrop-blur-sm shrink-0">
+                <!-- Input & Numpad -->
+                <div class="w-full bg-slate-900/50 p-4 rounded-xl border border-cyan-900/50 shrink-0">
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <!-- Input Display -->
                         <div class="flex-1 flex flex-col justify-end">
-                            <label class="text-xs text-cyan-400 mb-1 orbitron">INPUT OVERRIDE CODE:</label>
-                            <div id="code-display" class="w-full h-12 md:h-14 bg-black border-2 border-slate-600 rounded-xl flex items-center justify-end px-4 text-2xl orbitron text-cyan-400 tracking-widest shadow-inner">
+                            <label class="text-xs text-cyan-500 mb-1 orbitron">INPUT CODE:</label>
+                            <div id="input-display" class="w-full h-12 bg-black border border-slate-600 rounded-lg flex items-center justify-end px-4 text-2xl orbitron text-cyan-400 tracking-wider">
                                 <span class="animate-pulse text-slate-600">_</span>
                             </div>
-                            <button onclick="verifyCode()" class="btn-neon w-full py-3 text-base md:text-lg font-bold rounded-xl mt-3">
-                                SUBMIT
-                            </button>
+                            <button onclick="checkAnswer()" class="btn-neon w-full py-3 mt-3 rounded-lg font-bold">SUBMIT</button>
+                            <div id="feedback-msg" class="text-center text-sm mt-2 font-bold h-4"></div>
                         </div>
-
-                        <!-- Numpad -->
-                        <div class="w-full sm:w-48 grid grid-cols-3 gap-2">
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(1)">1</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(2)">2</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(3)">3</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(4)">4</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(5)">5</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(6)">6</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(7)">7</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(8)">8</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(9)">9</button>
-                            <button class="numpad-btn h-10 md:h-12 text-red-400 font-bold" onclick="clearInput()">C</button>
-                            <button class="numpad-btn h-10 md:h-12" onclick="typeNum(0)">0</button>
-                            <button class="numpad-btn h-10 md:h-12 text-slate-400" onclick="deleteNum()">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path></svg>
-                            </button>
+                        <div class="w-full sm:w-48 grid grid-cols-3 gap-2 shrink-0">
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(1)">1</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(2)">2</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(3)">3</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(4)">4</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(5)">5</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(6)">6</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(7)">7</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(8)">8</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(9)">9</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron text-red-400" onclick="clearInput()">C</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron" onclick="typeNum(0)">0</button>
+                            <button class="numpad-btn h-10 md:h-12 rounded-lg text-lg orbitron text-slate-400" onclick="deleteNum()">←</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Feedback Overlay -->
-            <div id="feedback-panel" class="feedback-overlay">
-                <div id="feedback-icon" class="mb-4"></div>
-                <h2 id="feedback-title" class="text-3xl md:text-5xl orbitron font-black mb-2 text-white text-center">SUCCESS</h2>
-                <p id="feedback-msg" class="text-lg md:text-xl text-slate-300 mb-8 text-center max-w-md px-4">Firewall bypassed.</p>
-                <button id="feedback-btn" class="btn-neon px-8 py-3 rounded-xl text-lg font-bold" onclick="closeFeedback()">PROCEED</button>
+            
+            <!-- Win Screen -->
+            <div id="screen-win" class="screen flex-col h-full items-center justify-center p-6 text-center">
+                <div class="w-24 h-24 rounded-full bg-yellow-500/20 border-4 border-yellow-400 flex items-center justify-center text-yellow-400 shadow-[0_0_30px_#facc15] mb-6">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                </div>
+                <h2 class="text-4xl orbitron font-black text-yellow-400 mb-4">MISSION COMPLETE</h2>
+                <p class="text-xl text-slate-300 mb-8">Master Detective Badge Unlocked.</p>
+                <button onclick="location.reload()" class="btn-neon px-8 py-3 rounded-lg font-bold border-yellow-400 text-yellow-400">PLAY AGAIN</button>
             </div>
-
         </div>
 
-        <!-- RIGHT COLUMN: CIRCUIT MAP -->
-        <div id="map-panel" class="w-full md:w-72 glass-panel p-6 flex flex-col relative z-20 hidden md:flex items-center min-h-[500px]">
-            <h3 class="orbitron w-full text-center text-sm md:text-lg text-slate-300 border-b border-slate-700 pb-4 mb-4 tracking-widest shrink-0">
-                MISSION PROGRESS
-            </h3>
-            
-            <!-- SVG Circuit Map (Nodes start from TOP and wind DOWN) -->
-            <div class="flex-1 w-full relative flex items-center justify-center min-h-0">
-                <svg viewBox="0 0 200 600" class="w-full h-full object-contain" preserveAspectRatio="xMidYMid meet">
-                    <!-- Base Inactive Circuit Path -->
-                    <path d="M 50 60 V 110 H 150 V 160 V 210 H 50 V 260 V 310 H 150 V 360 V 410 H 50 V 460 V 510 H 100 V 560" 
-                          fill="none" stroke="#1e293b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- RIGHT PANEL: Circuit Map -->
+        <div class="w-full md:w-64 lg:w-80 glass-panel rounded-2xl p-4 md:p-6 flex flex-col shrink-0 min-h-[300px] md:min-h-0">
+            <h3 class="orbitron text-center text-cyan-400 border-b border-cyan-900/50 pb-3 mb-4 tracking-widest shrink-0">MISSION PROGRESS</h3>
+            <div class="flex-1 w-full relative flex items-center justify-center overflow-hidden">
+                <svg viewBox="0 0 100 500" class="w-full h-full object-contain" preserveAspectRatio="xMidYMid meet">
+                    <!-- Base Path -->
+                    <path d="M 50 20 L 50 480" stroke="#1e293b" stroke-width="4" fill="none"/>
                     
-                    <!-- Glowing Active Circuit Path -->
-                    <path id="active-circuit-path" 
-                          d="M 50 60 V 110 H 150 V 160 V 210 H 50 V 260 V 310 H 150 V 360 V 410 H 50 V 460 V 510 H 100 V 560" 
-                          fill="none" stroke="#00f0ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"
-                          style="filter: drop-shadow(0 0 8px #00f0ff); transition: stroke-dashoffset 1s ease-in-out; stroke-dasharray: 950; stroke-dashoffset: 950;"/>
-
-                    <!-- Stage Nodes -->
-                    <g id="node-group-1" class="map-svg-node node-locked" transform="translate(50, 60)">
-                        <circle cx="0" cy="0" r="20" />
-                        <text x="0" y="6" text-anchor="middle">1</text>
+                    <!-- Nodes (1 Top to 6 Bottom) -->
+                    <g id="node-1" class="node active" transform="translate(50, 40)">
+                        <circle cx="0" cy="0" r="16" />
+                        <text x="0" y="5" text-anchor="middle" font-size="14">1</text>
                     </g>
-                    <g id="node-group-2" class="map-svg-node node-locked" transform="translate(150, 160)">
-                        <circle cx="0" cy="0" r="20" />
-                        <text x="0" y="6" text-anchor="middle">2</text>
+                    <g id="node-2" class="node locked" transform="translate(50, 120)">
+                        <circle cx="0" cy="0" r="16" />
+                        <text x="0" y="5" text-anchor="middle" font-size="14">2</text>
                     </g>
-                    <g id="node-group-3" class="map-svg-node node-locked" transform="translate(50, 260)">
-                        <circle cx="0" cy="0" r="20" />
-                        <text x="0" y="6" text-anchor="middle">3</text>
+                    <g id="node-3" class="node locked" transform="translate(50, 200)">
+                        <circle cx="0" cy="0" r="16" />
+                        <text x="0" y="5" text-anchor="middle" font-size="14">3</text>
                     </g>
-                    <g id="node-group-4" class="map-svg-node node-locked" transform="translate(150, 360)">
-                        <circle cx="0" cy="0" r="20" />
-                        <text x="0" y="6" text-anchor="middle">4</text>
+                    <g id="node-4" class="node locked" transform="translate(50, 280)">
+                        <circle cx="0" cy="0" r="16" />
+                        <text x="0" y="5" text-anchor="middle" font-size="14">4</text>
                     </g>
-                    <g id="node-group-5" class="map-svg-node node-locked" transform="translate(50, 460)">
-                        <circle cx="0" cy="0" r="20" />
-                        <text x="0" y="6" text-anchor="middle">5</text>
+                    <g id="node-5" class="node locked" transform="translate(50, 360)">
+                        <circle cx="0" cy="0" r="16" />
+                        <text x="0" y="5" text-anchor="middle" font-size="14">5</text>
                     </g>
-                    <g id="node-group-6" class="map-svg-node node-locked" transform="translate(100, 560)">
-                        <circle cx="0" cy="0" r="24" />
-                        <text x="0" y="7" text-anchor="middle" font-size="18">6</text>
+                    <g id="node-6" class="node locked" transform="translate(50, 440)">
+                        <circle cx="0" cy="0" r="20" />
+                        <text x="0" y="6" text-anchor="middle" font-size="16">6</text>
                     </g>
                 </svg>
             </div>
         </div>
+    </main>
 
-    </div>
-
-    <!-- FOOTER WITH IDEATOR & LIVE STATS -->
-    <footer class="w-full max-w-7xl mt-4 px-6 py-4 glass-panel flex flex-col md:flex-row justify-between items-center text-xs md:text-sm text-cyan-500/70 orbitron z-20 shrink-0 border-t border-cyan-900/50">
-        <div class="mb-2 md:mb-0 flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]"></div>
-            ACTIVE AGENTS: <span id="active-agents" class="text-cyan-300 font-bold drop-shadow-[0_0_5px_#00f0ff] transition-transform duration-200 inline-block">42</span>
+    <!-- Footer -->
+    <footer class="w-full max-w-6xl mx-auto mt-4 px-4 py-4 glass-panel rounded-xl flex flex-col md:flex-row justify-between items-center text-xs md:text-sm text-cyan-500/80 orbitron shrink-0 gap-2 md:gap-0">
+        <div>
+            ACTIVE AGENTS: <span id="active-agents" class="text-cyan-300 font-bold transition-all duration-300 inline-block">--</span>
         </div>
-        <div class="text-slate-400 font-sans tracking-widest uppercase mb-2 md:mb-0 text-[10px] md:text-xs text-center">
+        <div class="text-slate-400 font-sans tracking-widest uppercase">
             Ideated by <span class="text-cyan-400 font-bold">Mahua Banerjee</span>
         </div>
-        <div class="flex items-center gap-2">
-            BADGES AWARDED: <span class="text-yellow-400 font-bold drop-shadow-[0_0_5px_#facc15]">1,337</span>
+        <div>
+            BADGES AWARDED: <span id="badges-awarded" class="text-yellow-400 font-bold">--</span>
         </div>
     </footer>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // --- 1. PUZZLE DATA (6 Olympiad Levels) ---
-        const stages = [
+    <!-- Logic with Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ==============================================================================
+        // 1. FIREBASE CONFIGURATION - PASTE YOUR REAL DETAILS HERE
+        // ==============================================================================
+        const fallbackConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // Use environment configs if injected, otherwise fallback to user-pasted config above
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : fallbackConfig;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mystery-math-agency';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let user = null;
+        let statsDocRef = null;
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                user = auth.currentUser;
+                
+                // Set path following strict rules: /artifacts/{appId}/public/data/{collectionName}
+                statsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'global');
+                
+                // Initialize the tracking document if it's the first time running
+                const snap = await getDoc(statsDocRef);
+                if (!snap.exists()) {
+                    await setDoc(statsDocRef, { badgesAwarded: 0, activeAgents: 0 });
+                }
+
+                // Safely Increment active agents when someone joins
+                await updateDoc(statsDocRef, { activeAgents: increment(1) });
+
+                // Listen for live updates and update the UI
+                onSnapshot(statsDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        document.getElementById('active-agents').innerText = Math.max(0, data.activeAgents || 0);
+                        document.getElementById('badges-awarded').innerText = data.badgesAwarded || 0;
+                    }
+                }, (error) => {
+                    console.error("Error connecting to real-time stats:", error);
+                });
+
+                // Decrement active agents when someone closes the tab
+                window.addEventListener('beforeunload', () => {
+                    if (user && statsDocRef) {
+                        updateDoc(statsDocRef, { activeAgents: increment(-1) });
+                    }
+                });
+
+            } catch (e) {
+                console.error("Firebase Authentication Error:", e);
+            }
+        }
+        
+        // Safety check so the game doesn't crash if Firebase credentials aren't pasted yet
+        if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+            initAuth();
+        } else {
+            console.warn("Firebase config missing. Live tracking disabled. Set config at the top of the script.");
+            document.getElementById('active-agents').innerText = "1";
+            document.getElementById('badges-awarded').innerText = "0";
+        }
+
+        // ==============================================================================
+        // 2. GAME LOGIC & UI (Exported to window to bypass module scoping)
+        // ==============================================================================
+        
+        const puzzles = [
             {
-                id: 1,
-                title: "Olympiad Pattern",
-                type: "Number Sequence",
-                desc: "Identify the mathematical pattern to unlock the node.",
-                visualHtml: `
-                    <div class="flex items-center gap-2 flex-wrap justify-center text-sm md:text-xl">
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">3</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">7</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">15</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">31</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-cyan-900/50 px-3 md:px-4 py-2 rounded-lg border border-cyan-400 text-cyan-300 animate-pulse">[ ? ]</span>
-                    </div>
-                `,
-                answer: "63", // (+4, +8, +16, +32)
-                xp: 100
+                type: "Number Sequence", title: "Olympiad Pattern",
+                html: `<div class="font-mono text-xl md:text-2xl">3 &rarr; 7 &rarr; 15 &rarr; 31 &rarr; <span class="text-cyan-400">[ ? ]</span></div>`,
+                answer: "63", xp: 100
             },
             {
-                id: 2,
-                title: "Algebraic Scale",
-                type: "Substitution Logic",
-                desc: "Substitute the symbols to deduce the value of the Grape (🍇).",
-                visualHtml: `
-                    <div class="space-y-2 md:space-y-4 text-xl md:text-2xl text-left inline-block">
-                        <div>🍎 + 🍎 = <span class="text-cyan-400">10</span></div>
-                        <div>🍎 + 🍌 = <span class="text-cyan-400">9</span></div>
-                        <div>🍌 + 🍇 = <span class="text-cyan-400">10</span></div>
-                        <div class="text-yellow-400 pt-2 md:pt-4 border-t border-slate-700 mt-2 md:mt-4">🍇 = [ ? ]</div>
-                    </div>
-                `,
-                answer: "6", // Apple=5, Banana=4, Grape=6
-                xp: 150
+                type: "Substitution", title: "Algebraic Deduction",
+                html: `<div class="space-y-2 text-xl font-mono"><div>🍎 + 🍎 = 10</div><div>🍎 + 🍌 = 9</div><div>🍌 + 🍇 = 10</div><div class="text-yellow-400 mt-2">🍇 = [ ? ]</div></div>`,
+                answer: "6", xp: 150
             },
             {
-                id: 3,
-                title: "Magic Square Logic",
-                type: "Spatial Deduction",
-                desc: "In a Magic Square, every row, column, and diagonal adds up to exactly 15. Find the missing center.",
-                visualHtml: `
-                    <div class="grid grid-cols-3 gap-2 w-40 md:w-56 mx-auto text-base md:text-xl">
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">8</div>
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">1</div>
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">6</div>
-                        
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">3</div>
-                        <div class="bg-cyan-900/50 border-2 border-cyan-400 h-12 md:h-14 flex items-center justify-center rounded-lg animate-pulse text-cyan-300">[?]</div>
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">7</div>
-                        
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">4</div>
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">9</div>
-                        <div class="bg-slate-800 h-12 md:h-14 flex items-center justify-center rounded-lg">2</div>
-                    </div>
-                `,
-                answer: "5",
-                xp: 200
+                type: "Spatial Logic", title: "Magic Grid",
+                html: `<div class="grid grid-cols-3 gap-2 w-48 mx-auto font-mono text-xl"><div class="bg-slate-800 py-2 rounded">8</div><div class="bg-slate-800 py-2 rounded">1</div><div class="bg-slate-800 py-2 rounded">6</div><div class="bg-slate-800 py-2 rounded">3</div><div class="bg-cyan-900 border border-cyan-400 py-2 rounded text-cyan-400">[?]</div><div class="bg-slate-800 py-2 rounded">7</div><div class="bg-slate-800 py-2 rounded">4</div><div class="bg-slate-800 py-2 rounded">9</div><div class="bg-slate-800 py-2 rounded">2</div></div>`,
+                answer: "5", xp: 200
             },
             {
-                id: 4,
-                title: "Geometric Logic",
-                type: "Algebraic Equations",
-                desc: "Analyze the properties to unlock the Square (⬛).",
-                visualHtml: `
-                    <div class="space-y-2 md:space-y-4 text-xl md:text-2xl text-left inline-block">
-                        <div>🔺 + ⬛ = <span class="text-cyan-400">12</span></div>
-                        <div>🔺 = ⬛ + ⬛</div>
-                        <div class="text-yellow-400 pt-2 md:pt-4 border-t border-slate-700 mt-2 md:mt-4">⬛ = [ ? ]</div>
-                    </div>
-                `,
-                answer: "4", 
-                xp: 250
+                type: "Algebra", title: "Geometric Equations",
+                html: `<div class="space-y-2 text-xl font-mono"><div>🔺 + ⬛ = 12</div><div>🔺 = ⬛ + ⬛</div><div class="text-yellow-400 mt-2">⬛ = [ ? ]</div></div>`,
+                answer: "4", xp: 250
             },
             {
-                id: 5,
-                title: "Number Theory",
-                type: "LCM Deduction",
-                desc: "Spy A leaves a beacon every 6 mins. Spy B leaves one every 8 mins. In how many mins do they leave one together?",
-                visualHtml: `
-                    <div class="bg-slate-900 p-4 md:p-6 rounded-xl text-center inline-block border border-slate-700 w-full max-w-md text-xl md:text-2xl font-mono">
-                        <span class="text-purple-400">LCM( 6 , 8 )</span> = <span class="text-yellow-400 animate-pulse">[ ? ]</span>
-                    </div>
-                `,
-                answer: "24", 
-                xp: 300
+                type: "Number Theory", title: "LCM Deduction",
+                html: `<div class="text-xl font-mono"><span class="text-purple-400">LCM( 6 , 8 )</span> = <span class="text-yellow-400">[ ? ]</span></div>`,
+                answer: "24", xp: 300
             },
             {
-                id: 6,
-                title: "Cipher Intercept",
-                type: "Logic Cryptography",
-                desc: "Translate the final word to numbers based on the rule.",
-                visualHtml: `
-                    <div class="bg-slate-900 p-4 md:p-6 rounded-xl text-left inline-block border border-slate-700 w-full max-w-md">
-                        <p class="text-slate-400 mb-3 md:mb-4 font-mono text-xs md:text-sm">RULE: Letters equal their alphabet position (A=1, B=2...). Word values are the sum of their letters.</p>
-                        <div class="text-lg md:text-xl space-y-2 font-mono">
-                            <div><span class="text-purple-400">C A B</span> = 3 + 1 + 2 = <span class="text-cyan-400">6</span></div>
-                            <div class="text-yellow-400 pt-2 border-t border-slate-700 mt-2"><span class="text-purple-400">B A D</span> = [ ? ]</div>
-                        </div>
-                    </div>
-                `,
-                answer: "7", 
-                xp: 400
+                type: "Cryptography", title: "Cipher Intercept",
+                html: `<div class="text-lg font-mono"><p class="text-sm text-slate-400 mb-2">A=1, B=2, C=3...</p><div>CAB = 3+1+2 = 6</div><div class="text-yellow-400 mt-2">BAD = [ ? ]</div></div>`,
+                answer: "7", xp: 400
             }
         ];
 
-        // --- 2. GAME STATE ---
-        let currentUnlockedStage = 1;
-        let activeStageIndex = 0;
-        let totalScore = 0;
-        let currentInput = "";
+        let currentStage = 0;
+        let score = 0;
+        let inputVal = "";
 
-        // Calculated dash-offsets based on the total path length (~950) going top-to-bottom.
-        const mapOffsets = {
-            1: 950,
-            2: 750,
-            3: 550,
-            4: 350,
-            5: 150,
-            6: 0,
-            7: 0
-        };
+        const screens = document.querySelectorAll('.screen');
+        const inputDisplay = document.getElementById('input-display');
+        const msg = document.getElementById('feedback-msg');
 
-        // --- 3. INIT & ANIMATIONS ---
-        function createParticles() {
-            const container = document.getElementById('particle-container');
-            const symbols = ['+', '-', '×', '÷', '=', 'π', '∞', '∑', '√'];
-            for(let i=0; i<30; i++) {
-                let div = document.createElement('div');
-                div.className = 'math-particle';
-                div.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                div.style.left = Math.random() * 100 + 'vw';
-                div.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                div.style.animationDelay = (Math.random() * 10) + 's';
-                container.appendChild(div);
+        window.startGame = function() {
+            currentStage = 0;
+            score = 0;
+            updateMap();
+            loadStage();
+            showScreen('screen-puzzle');
+        }
+
+        function loadStage() {
+            if(currentStage >= puzzles.length) {
+                showScreen('screen-win');
+                return;
             }
+            const p = puzzles[currentStage];
+            document.getElementById('puzzle-badge').innerText = `STAGE ${currentStage + 1}: ${p.type.toUpperCase()}`;
+            document.getElementById('puzzle-title').innerText = p.title;
+            document.getElementById('puzzle-visual').innerHTML = p.html;
+            window.clearInput();
+            msg.innerText = "";
         }
-        createParticles();
 
-        // --- LIVE AGENT COUNTER LOGIC ---
-        let baseAgents = 42;
-        setInterval(() => {
-            const change = Math.floor(Math.random() * 5) - 2; 
-            baseAgents = Math.max(15, baseAgents + change); 
+        window.typeNum = function(n) { if(inputVal.length < 5) { inputVal += n; renderInput(); } }
+        window.deleteNum = function() { inputVal = inputVal.slice(0, -1); renderInput(); }
+        window.clearInput = function() { inputVal = ""; renderInput(); }
+        
+        function renderInput() {
+            inputDisplay.innerHTML = inputVal === "" ? `<span class="animate-pulse text-slate-600">_</span>` : inputVal;
+            msg.innerText = "";
+        }
+
+        window.checkAnswer = async function() {
+            if(inputVal === "") return;
+            const p = puzzles[currentStage];
             
-            const agentElement = document.getElementById('active-agents');
-            if (agentElement) {
-                agentElement.innerText = baseAgents;
-                agentElement.style.transform = "scale(1.3)";
-                setTimeout(() => agentElement.style.transform = "scale(1)", 200);
-            }
-        }, 3500);
-
-        // --- 4. NAVIGATION & MAP RENDER ---
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function startTraining() {
-            document.getElementById('map-panel').classList.remove('hidden'); 
-            renderMap();
-            loadStage(0);
-        }
-
-        function renderMap() {
-            const activePath = document.getElementById('active-circuit-path');
-            const targetOffset = mapOffsets[currentUnlockedStage] !== undefined ? mapOffsets[currentUnlockedStage] : 0;
-            activePath.style.strokeDashoffset = targetOffset;
-
-            stages.forEach((stage, index) => {
-                const stageNum = index + 1;
-                const nodeGroup = document.getElementById(`node-group-${stageNum}`);
+            if(inputVal === p.answer) {
+                msg.innerText = "ACCESS GRANTED";
+                msg.className = "text-center text-sm mt-2 font-bold h-4 text-cyan-400";
+                score += p.xp;
+                document.getElementById('score-display').innerText = score;
                 
-                nodeGroup.classList.remove('node-locked', 'node-unlocked', 'node-completed');
-
-                if (stageNum < currentUnlockedStage) {
-                    nodeGroup.classList.add('node-completed');
-                    nodeGroup.onclick = () => loadStage(index);
-                } else if (stageNum === currentUnlockedStage) {
-                    nodeGroup.classList.add('node-unlocked');
-                    nodeGroup.onclick = () => loadStage(index);
-                } else {
-                    nodeGroup.classList.add('node-locked');
-                    nodeGroup.onclick = null;
-                }
-            });
-
-            document.getElementById('xp-points').innerText = totalScore;
-        }
-
-        function loadStage(index) {
-            activeStageIndex = index;
-            const stage = stages[index];
-            
-            document.getElementById('puzzle-badge').innerText = `STAGE ${stage.id} : ${stage.type.toUpperCase()}`;
-            document.getElementById('puzzle-title').innerText = stage.title;
-            document.getElementById('puzzle-desc').innerText = stage.desc;
-            document.getElementById('puzzle-visual').innerHTML = stage.visualHtml;
-            
-            currentInput = "";
-            updateDisplay();
-            switchScreen('screen-puzzle');
-        }
-
-        // --- 5. INPUT LOGIC ---
-        function typeNum(num) {
-            if (currentInput.length < 5) { currentInput += num; updateDisplay(); }
-        }
-        function deleteNum() {
-            currentInput = currentInput.slice(0, -1); updateDisplay();
-        }
-        function clearInput() {
-            currentInput = ""; updateDisplay();
-        }
-        function updateDisplay() {
-            const display = document.getElementById('code-display');
-            if (currentInput === "") {
-                display.innerHTML = `<span class="animate-pulse text-slate-600">_</span>`;
-            } else {
-                display.innerText = currentInput;
-            }
-        }
-
-        // --- 6. VALIDATION & PROGRESSION ---
-        function verifyCode() {
-            const stage = stages[activeStageIndex];
-            const panel = document.getElementById('feedback-panel');
-            const icon = document.getElementById('feedback-icon');
-            const title = document.getElementById('feedback-title');
-            const msg = document.getElementById('feedback-msg');
-            const btn = document.getElementById('feedback-btn');
-
-            if (currentInput === stage.answer) {
-                icon.innerHTML = `<div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-cyan-500/20 border-4 border-cyan-400 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_#00f0ff]"><svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>`;
-                title.innerText = "ACCESS GRANTED";
-                title.className = "text-2xl md:text-5xl orbitron font-black mb-2 text-cyan-400 drop-shadow-[0_0_10px_#00f0ff] text-center";
-                
-                if (activeStageIndex + 1 === currentUnlockedStage) {
-                    totalScore += stage.xp;
-                    currentUnlockedStage++;
-                    msg.innerHTML = `Firewall bypassed.<br><span class="text-cyan-400 font-bold">+${stage.xp} XP</span>`;
-                } else {
-                    msg.innerText = "Firewall already bypassed.";
-                }
-                
-                btn.className = "btn-neon px-8 py-3 rounded-xl text-lg mt-6";
-                btn.onclick = () => { 
-                    closeFeedback(); 
-                    renderMap();
-                    if (currentUnlockedStage <= stages.length) {
-                        loadStage(currentUnlockedStage - 1);
+                // If this is the very last stage, update the permanent Database badge tracker
+                if(currentStage === puzzles.length - 1 && user && statsDocRef) {
+                    try {
+                        await updateDoc(statsDocRef, { badgesAwarded: increment(1) });
+                    } catch (e) {
+                        console.error("Could not upload badge award to database:", e);
                     }
-                };
+                }
 
+                setTimeout(() => {
+                    currentStage++;
+                    updateMap();
+                    loadStage();
+                }, 1000);
             } else {
-                document.getElementById('code-display').classList.add('shake-err');
-                setTimeout(() => document.getElementById('code-display').classList.remove('shake-err'), 400);
-
-                icon.innerHTML = `<div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-500/20 border-4 border-red-500 flex items-center justify-center text-red-500 shadow-[0_0_20px_#ff003c]"><svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg></div>`;
-                title.innerText = "ACCESS DENIED";
-                title.className = "text-2xl md:text-5xl orbitron font-black mb-2 text-red-500 drop-shadow-[0_0_10px_#ff003c] text-center";
-                msg.innerText = "Incorrect sequence. Check the logic and try again.";
-                
-                btn.className = "btn-neon px-8 py-3 rounded-xl text-lg mt-6 border-red-500 text-red-500";
-                btn.onmouseover = function() { this.style.background = '#ff003c'; this.style.color = 'white'; }
-                btn.onmouseout = function() { this.style.background = 'transparent'; this.style.color = '#ff003c'; }
-                btn.onclick = () => { closeFeedback(); clearInput(); };
-            }
-
-            panel.classList.add('show');
-        }
-
-        function closeFeedback() {
-            document.getElementById('feedback-panel').classList.remove('show');
-            if (currentUnlockedStage > stages.length) {
-                setTimeout(showWinScreen, 500);
+                msg.innerText = "ACCESS DENIED";
+                msg.className = "text-center text-sm mt-2 font-bold h-4 text-red-500";
+                window.clearInput();
             }
         }
 
-        function showWinScreen() {
-            const panel = document.getElementById('feedback-panel');
-            const icon = document.getElementById('feedback-icon');
-            const title = document.getElementById('feedback-title');
-            const msg = document.getElementById('feedback-msg');
-            const btn = document.getElementById('feedback-btn');
+        function updateMap() {
+            for(let i=1; i<=6; i++) {
+                const node = document.getElementById(`node-${i}`);
+                node.className.baseVal = "node ";
+                if(i < currentStage + 1) node.className.baseVal += "completed";
+                else if(i === currentStage + 1) node.className.baseVal += "active";
+                else node.className.baseVal += "locked";
+            }
+        }
 
-            icon.innerHTML = `<div class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-yellow-500/20 border-4 border-yellow-400 flex items-center justify-center text-yellow-400 shadow-[0_0_40px_#facc15]"><svg class="w-12 h-12 md:w-14 md:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg></div>`;
-            title.innerText = "TRAINING COMPLETE";
-            title.className = "text-2xl md:text-5xl orbitron font-black mb-2 text-yellow-400 drop-shadow-[0_0_15px_#facc15] text-center";
-            msg.innerHTML = `Congratulations, Agent.<br>You have earned your Master Detective Badge.<br>Final Score: <strong class="text-yellow-400 text-xl md:text-2xl">${totalScore} XP</strong>.`;
-            
-            btn.innerText = "END SIMULATION";
-            btn.className = "btn-neon px-8 py-3 rounded-xl text-lg mt-6 border-yellow-400 text-yellow-400";
-            btn.onmouseover = function() { this.style.background = '#facc15'; this.style.color = 'black'; }
-            btn.onmouseout = function() { this.style.background = 'transparent'; this.style.color = '#facc15'; }
-            btn.onclick = () => { location.reload(); }; 
-            
-            panel.classList.add('show');
+        function showScreen(id) {
+            screens.forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
     </script>
 </body>
