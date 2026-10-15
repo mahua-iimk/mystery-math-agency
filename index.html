@@ -141,7 +141,7 @@
         }
     </style>
 </head>
-<body class="w-full min-h-screen flex items-center justify-center p-2 md:p-6 overflow-x-hidden">
+<body class="w-full min-h-screen flex flex-col items-center justify-center p-2 md:p-6 overflow-x-hidden">
 
     <!-- Particles Background -->
     <div id="particle-container"></div>
@@ -170,7 +170,7 @@
             <!-- VIEW 1: BRIEFING SCREEN -->
             <div id="screen-briefing" class="screen active flex-1 items-center justify-center p-4 md:p-8 text-center relative z-10">
                 
-                <!-- SVG Agent Bot (Shrinks and fits container) -->
+                <!-- SVG Agent Bot -->
                 <div class="agent-bot w-28 h-28 md:w-40 md:h-40 mb-4 shrink-0 relative flex justify-center mt-4">
                     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full object-contain">
                         <line x1="100" y1="20" x2="100" y2="50" stroke="#00f0ff" stroke-width="4"/>
@@ -206,21 +206,21 @@
             <!-- VIEW 2: PUZZLE INTERFACE -->
             <div id="screen-puzzle" class="screen flex flex-col p-4 md:p-6 relative z-10">
                 
-                <!-- Puzzle Header (Shrinks slightly, stays visible) -->
+                <!-- Puzzle Header -->
                 <div class="text-center mb-4 shrink-0 mt-2">
                     <div id="puzzle-badge" class="inline-block px-3 py-1 rounded-full bg-cyan-950 border border-cyan-500 text-cyan-300 orbitron text-xs md:text-sm mb-2">STAGE 1</div>
                     <h2 id="puzzle-title" class="text-xl md:text-2xl orbitron font-bold text-white mb-1">Title</h2>
                     <p id="puzzle-desc" class="text-slate-400 text-xs md:text-sm">Description</p>
                 </div>
 
-                <!-- Puzzle Visual Area (Flex-1 allows it to grow and fill empty space) -->
+                <!-- Puzzle Visual Area -->
                 <div class="flex-1 w-full bg-black/50 border border-slate-700 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[160px] shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mb-4">
                     <div id="puzzle-visual" class="text-center text-lg md:text-2xl font-bold tracking-widest leading-relaxed">
                         <!-- Content Injected via JS -->
                     </div>
                 </div>
 
-                <!-- Interactive Controls (Bottom pinned, shrink-0 prevents numpad cutoff) -->
+                <!-- Interactive Controls & Numpad -->
                 <div class="w-full max-w-lg mx-auto bg-slate-800/60 p-4 rounded-2xl border border-cyan-900 backdrop-blur-sm shrink-0">
                     <div class="flex flex-col sm:flex-row gap-4">
                         <!-- Input Display -->
@@ -274,44 +274,37 @@
             <!-- SVG Circuit Map (Nodes start from TOP and wind DOWN) -->
             <div class="flex-1 w-full relative flex items-center justify-center min-h-0">
                 <svg viewBox="0 0 200 600" class="w-full h-full object-contain" preserveAspectRatio="xMidYMid meet">
-                    <!-- Base Inactive Circuit Path (Top to Bottom) -->
+                    <!-- Base Inactive Circuit Path -->
                     <path d="M 50 60 V 110 H 150 V 160 V 210 H 50 V 260 V 310 H 150 V 360 V 410 H 50 V 460 V 510 H 100 V 560" 
                           fill="none" stroke="#1e293b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
                     
                     <!-- Glowing Active Circuit Path -->
-                    <!-- Path length is approx 950. Dashoffset draws it dynamically. -->
                     <path id="active-circuit-path" 
                           d="M 50 60 V 110 H 150 V 160 V 210 H 50 V 260 V 310 H 150 V 360 V 410 H 50 V 460 V 510 H 100 V 560" 
                           fill="none" stroke="#00f0ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"
                           style="filter: drop-shadow(0 0 8px #00f0ff); transition: stroke-dashoffset 1s ease-in-out; stroke-dasharray: 950; stroke-dashoffset: 950;"/>
 
                     <!-- Stage Nodes -->
-                    <!-- Node 1 (TOP) -->
                     <g id="node-group-1" class="map-svg-node node-locked" transform="translate(50, 60)">
                         <circle cx="0" cy="0" r="20" />
                         <text x="0" y="6" text-anchor="middle">1</text>
                     </g>
-                    <!-- Node 2 -->
                     <g id="node-group-2" class="map-svg-node node-locked" transform="translate(150, 160)">
                         <circle cx="0" cy="0" r="20" />
                         <text x="0" y="6" text-anchor="middle">2</text>
                     </g>
-                    <!-- Node 3 -->
                     <g id="node-group-3" class="map-svg-node node-locked" transform="translate(50, 260)">
                         <circle cx="0" cy="0" r="20" />
                         <text x="0" y="6" text-anchor="middle">3</text>
                     </g>
-                    <!-- Node 4 -->
                     <g id="node-group-4" class="map-svg-node node-locked" transform="translate(150, 360)">
                         <circle cx="0" cy="0" r="20" />
                         <text x="0" y="6" text-anchor="middle">4</text>
                     </g>
-                    <!-- Node 5 -->
                     <g id="node-group-5" class="map-svg-node node-locked" transform="translate(50, 460)">
                         <circle cx="0" cy="0" r="20" />
                         <text x="0" y="6" text-anchor="middle">5</text>
                     </g>
-                    <!-- Node 6 (BOTTOM) -->
                     <g id="node-group-6" class="map-svg-node node-locked" transform="translate(100, 560)">
                         <circle cx="0" cy="0" r="24" />
                         <text x="0" y="7" text-anchor="middle" font-size="18">6</text>
@@ -322,31 +315,45 @@
 
     </div>
 
+    <!-- FOOTER WITH IDEATOR & LIVE STATS -->
+    <footer class="w-full max-w-7xl mt-4 px-6 py-4 glass-panel flex flex-col md:flex-row justify-between items-center text-xs md:text-sm text-cyan-500/70 orbitron z-20 shrink-0 border-t border-cyan-900/50">
+        <div class="mb-2 md:mb-0 flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]"></div>
+            ACTIVE AGENTS: <span id="active-agents" class="text-cyan-300 font-bold drop-shadow-[0_0_5px_#00f0ff] transition-transform duration-200 inline-block">42</span>
+        </div>
+        <div class="text-slate-400 font-sans tracking-widest uppercase mb-2 md:mb-0 text-[10px] md:text-xs text-center">
+            Ideated by <span class="text-cyan-400 font-bold">Mahua Banerjee</span>
+        </div>
+        <div class="flex items-center gap-2">
+            BADGES AWARDED: <span class="text-yellow-400 font-bold drop-shadow-[0_0_5px_#facc15]">1,337</span>
+        </div>
+    </footer>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- 1. PUZZLE DATA ---
+        // --- 1. PUZZLE DATA (6 Olympiad Levels) ---
         const stages = [
             {
                 id: 1,
-                title: "The Growing Vault",
+                title: "Olympiad Pattern",
                 type: "Number Sequence",
                 desc: "Identify the mathematical pattern to unlock the node.",
                 visualHtml: `
                     <div class="flex items-center gap-2 flex-wrap justify-center text-sm md:text-xl">
                         <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">3</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">6</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">12</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">24</span> <span class="text-cyan-500">→</span>
+                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">7</span> <span class="text-cyan-500">→</span>
+                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">15</span> <span class="text-cyan-500">→</span>
+                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">31</span> <span class="text-cyan-500">→</span>
                         <span class="bg-cyan-900/50 px-3 md:px-4 py-2 rounded-lg border border-cyan-400 text-cyan-300 animate-pulse">[ ? ]</span>
                     </div>
                 `,
-                answer: "48",
+                answer: "63", // (+4, +8, +16, +32)
                 xp: 100
             },
             {
                 id: 2,
-                title: "Fruit Stand Encryption",
-                type: "Algebraic Balance",
+                title: "Algebraic Scale",
+                type: "Substitution Logic",
                 desc: "Substitute the symbols to deduce the value of the Grape (🍇).",
                 visualHtml: `
                     <div class="space-y-2 md:space-y-4 text-xl md:text-2xl text-left inline-block">
@@ -356,13 +363,13 @@
                         <div class="text-yellow-400 pt-2 md:pt-4 border-t border-slate-700 mt-2 md:mt-4">🍇 = [ ? ]</div>
                     </div>
                 `,
-                answer: "6", 
+                answer: "6", // Apple=5, Banana=4, Grape=6
                 xp: 150
             },
             {
                 id: 3,
-                title: "The Ancient Magic Grid",
-                type: "Spatial Logic",
+                title: "Magic Square Logic",
+                type: "Spatial Deduction",
                 desc: "In a Magic Square, every row, column, and diagonal adds up to exactly 15. Find the missing center.",
                 visualHtml: `
                     <div class="grid grid-cols-3 gap-2 w-40 md:w-56 mx-auto text-base md:text-xl">
@@ -385,7 +392,7 @@
             {
                 id: 4,
                 title: "Geometric Logic",
-                type: "Substitution",
+                type: "Algebraic Equations",
                 desc: "Analyze the properties to unlock the Square (⬛).",
                 visualHtml: `
                     <div class="space-y-2 md:space-y-4 text-xl md:text-2xl text-left inline-block">
@@ -399,19 +406,15 @@
             },
             {
                 id: 5,
-                title: "The Exponential Gap",
-                type: "Complex Sequence",
-                desc: "The jumps between these numbers are changing. Find the next value.",
+                title: "Number Theory",
+                type: "LCM Deduction",
+                desc: "Spy A leaves a beacon every 6 mins. Spy B leaves one every 8 mins. In how many mins do they leave one together?",
                 visualHtml: `
-                    <div class="flex items-center gap-2 flex-wrap justify-center text-sm md:text-xl">
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">1</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">4</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">9</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-slate-800 px-3 md:px-4 py-2 rounded-lg border border-slate-600">16</span> <span class="text-cyan-500">→</span>
-                        <span class="bg-cyan-900/50 px-3 md:px-4 py-2 rounded-lg border border-cyan-400 text-cyan-300 animate-pulse">[ ? ]</span>
+                    <div class="bg-slate-900 p-4 md:p-6 rounded-xl text-center inline-block border border-slate-700 w-full max-w-md text-xl md:text-2xl font-mono">
+                        <span class="text-purple-400">LCM( 6 , 8 )</span> = <span class="text-yellow-400 animate-pulse">[ ? ]</span>
                     </div>
                 `,
-                answer: "25", 
+                answer: "24", 
                 xp: 300
             },
             {
@@ -440,7 +443,6 @@
         let currentInput = "";
 
         // Calculated dash-offsets based on the total path length (~950) going top-to-bottom.
-        // As you progress, the offset decreases to reveal the line leading to the active node.
         const mapOffsets = {
             1: 950,
             2: 750,
@@ -466,6 +468,20 @@
             }
         }
         createParticles();
+
+        // --- LIVE AGENT COUNTER LOGIC ---
+        let baseAgents = 42;
+        setInterval(() => {
+            const change = Math.floor(Math.random() * 5) - 2; 
+            baseAgents = Math.max(15, baseAgents + change); 
+            
+            const agentElement = document.getElementById('active-agents');
+            if (agentElement) {
+                agentElement.innerText = baseAgents;
+                agentElement.style.transform = "scale(1.3)";
+                setTimeout(() => agentElement.style.transform = "scale(1)", 200);
+            }
+        }, 3500);
 
         // --- 4. NAVIGATION & MAP RENDER ---
         function switchScreen(screenId) {
